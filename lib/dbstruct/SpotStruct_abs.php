@@ -371,7 +371,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('userkey', 'spotsfull', 'VARCHAR(512)', NULL, false, 'ascii'); 
 		$this->validateColumn('xmlsignature', 'spotsfull', 'VARCHAR(255)', NULL, false, 'ascii'); 
 		$this->validateColumn('fullxml', 'spotsfull', 'TEXT', NULL, false, 'utf8');
-		$this->alterStorageEngine("spotsfull", "InnoDB");
+		$this->alterStorageEngine("spotsfull", "MyIsam");
 	
 		# ---- uspstate table ---- #
 		$this->createTable('usenetstate', "utf8");
@@ -380,7 +380,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('curmessageid', 'usenetstate', 'VARCHAR(128)', "''", true, 'ascii');
 		$this->validateColumn('lastretrieved', 'usenetstate', 'INTEGER', "0", false, '');
         $this->validateColumn('nowrunning', 'usenetstate', 'INTEGER', "0", false, '');
-		$this->alterStorageEngine("usenetstate", "InnoDB");
+		$this->alterStorageEngine("usenetstate", "MyIsam");
 		
 		# ---- commentsxover table ---- #
 		$this->createTable('commentsxover', "ascii"); 
@@ -389,7 +389,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('spotrating', 'commentsxover', 'INTEGER', "0", false, '');
 		$this->validateColumn('moderated', 'commentsxover', 'BOOLEAN', NULL, false, '');
 		$this->validateColumn('stamp', 'commentsxover', 'UNSIGNED INTEGER', NULL, false, '');
-		$this->alterStorageEngine("commentsxover", "InnoDB");
+		$this->alterStorageEngine("commentsxover", "MyIsam");
 
 		# ---- reportsxover table ---- #
 		$this->createTable('reportsxover', "ascii"); 
@@ -397,7 +397,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('fromhdr', 'reportsxover', 'VARCHAR(256)', "''", true, 'utf8');
 		$this->validateColumn('keyword', 'reportsxover', 'VARCHAR(128)', "''", true, 'ascii');
 		$this->validateColumn('nntpref', 'reportsxover', 'VARCHAR(128)', "''", true, 'ascii');
-		$this->alterStorageEngine("reportsxover", "InnoDB");
+		$this->alterStorageEngine("reportsxover", "MyIsam");
 		
 		# ---- spotstatelist table ---- #
 		$this->createTable('spotstatelist', "ascii"); 
@@ -406,7 +406,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('download', 'spotstatelist', 'INTEGER', NULL, false, '');
 		$this->validateColumn('watch', 'spotstatelist', 'INTEGER', NULL, false, '');
 		$this->validateColumn('seen', 'spotstatelist', 'INTEGER', NULL, false, '');
-		$this->alterStorageEngine("spotstatelist", "InnoDB");
+		$this->alterStorageEngine("spotstatelist", "MyIsam");
 		
 		# ---- commentsfull table ---- #
 		$this->createTable('commentsfull', "ascii"); 
@@ -420,14 +420,14 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('body', 'commentsfull', 'TEXT', NULL, false, 'utf8');
 		$this->validateColumn('verified', 'commentsfull', 'BOOLEAN', NULL, false, '');
 		$this->validateColumn('avatar', 'commentsfull', 'TEXT', NULL, false, 'ascii');
-		$this->alterStorageEngine("commentsfull", "InnoDB");
+		$this->alterStorageEngine("commentsfull", "MyIsam");
 											
 		# ---- settings table ---- #
 		$this->createTable('settings', "ascii"); 
 		$this->validateColumn('name', 'settings', 'VARCHAR(128)', "''", true, 'ascii'); 
 		$this->validateColumn('value', 'settings', 'TEXT', NULL, false, 'utf8');
 		$this->validateColumn('serialized', 'settings', 'boolean', NULL, false, '');
-		$this->alterStorageEngine("settings", "InnoDB");
+		$this->alterStorageEngine("settings", "MyIsam");
 
 		# ---- commentsposted table ---- #
 		$this->createTable('commentsposted', "ascii"); 
@@ -438,7 +438,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('rating', 'commentsposted', 'INTEGER', 0, true, '');
 		$this->validateColumn('body', 'commentsposted', 'TEXT', NULL, false, 'utf8');
 		$this->validateColumn('stamp', 'commentsposted', 'INTEGER', "0", true, '');
-		$this->alterStorageEngine("commentsposted", "InnoDB");
+		$this->alterStorageEngine("commentsposted", "MyIsam");
 
 		# ---- spotsposted table ---- #
 		$this->createTable('spotsposted', "utf8"); 
@@ -451,7 +451,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('subcats', 'spotsposted', 'VARCHAR(255)', NULL, false, 'ascii'); 
 		$this->validateColumn('filesize', 'spotsposted', 'UNSIGNED BIGINTEGER', "0", true, '');
 		$this->validateColumn('fullxml', 'spotsposted', 'TEXT', NULL, false, 'utf8');
-		$this->alterStorageEngine("spotsposted", "InnoDB");
+		$this->alterStorageEngine("spotsposted", "MyIsam");
 		
 		# ---- reportsposted table ---- #
 		$this->createTable('reportsposted', "ascii"); 
@@ -461,7 +461,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('randompart', 'reportsposted', 'VARCHAR(32)', "''", true, 'ascii');
 		$this->validateColumn('body', 'reportsposted', 'TEXT', NULL, false, 'utf8');
 		$this->validateColumn('stamp', 'reportsposted', 'INTEGER', "0", true, '');
-		$this->alterStorageEngine("reportsposted", "InnoDB");
+		$this->alterStorageEngine("reportsposted", "MyIsam");
 		
 		# ---- usersettings table ---- #
 		$this->createTable('usersettings', "utf8"); 
@@ -470,7 +470,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('publickey', 'usersettings', "TEXT", NULL, false, 'ascii');
 		$this->validateColumn('avatar', 'usersettings', "TEXT", NULL, false, 'ascii');
 		$this->validateColumn('otherprefs', 'usersettings', "TEXT", NULL, false, 'utf8');
-		$this->alterStorageEngine("usersettings", "InnoDB");
+		$this->alterStorageEngine("usersettings", "MyIsam");
 	
 		# ---- users table ---- #
 		$this->createTable('users', "utf8"); 
@@ -485,7 +485,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('lastread', 'users', "INTEGER", "0", true, '');
 		$this->validateColumn('lastapiusage', 'users', "INTEGER", "0", true, '');
 		$this->validateColumn('deleted', 'users', "BOOLEAN", $this->bool2dt(false), true, '');
-		$this->alterStorageEngine("users", "InnoDB");
+		$this->alterStorageEngine("users", "MyIsam");
 
 		# ---- sessions ---- #
 		$this->createTable('sessions', "ascii");
@@ -500,7 +500,7 @@ abstract class SpotStruct_abs {
 		# ---- securitygroups ----
 		$this->createTable('securitygroups', "ascii"); 
 		$this->validateColumn('name', 'securitygroups', 'VARCHAR(128)', NULL, false, 'ascii');
-		$this->alterStorageEngine("securitygroups", "InnoDB");
+		$this->alterStorageEngine("securitygroups", "MyIsam");
 
 		# ---- grouppermissions ----
 		$this->createTable('grouppermissions', "ascii"); 
@@ -508,14 +508,14 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('permissionid', 'grouppermissions', 'INTEGER', "0", true, '');
 		$this->validateColumn('objectid', 'grouppermissions', "VARCHAR(128)", "''", true, 'ascii');
 		$this->validateColumn('deny', 'grouppermissions', "BOOLEAN", $this->bool2dt(false), true, ''); 
-		$this->alterStorageEngine("grouppermissions", "InnoDB");
+		$this->alterStorageEngine("grouppermissions", "MyIsam");
 		
 		# ---- usergroups ----
 		$this->createTable('usergroups', "ascii"); 
 		$this->validateColumn('userid', 'usergroups', 'INTEGER', "0", true, '');
 		$this->validateColumn('groupid', 'usergroups', 'INTEGER', "0", true, '');
 		$this->validateColumn('prio', 'usergroups', 'INTEGER', '1', true, '');
-		$this->alterStorageEngine("usergroups", "InnoDB");
+		$this->alterStorageEngine("usergroups", "MyIsam");
 		
 		# ---- notifications ----
 		$this->createTable('notifications', "ascii"); 
@@ -526,7 +526,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('title', 'notifications', 'VARCHAR(128)', "''", true, 'utf8');
 		$this->validateColumn('body', 'notifications', 'TEXT', NULL, false, 'utf8');
 		$this->validateColumn('sent', 'notifications', 'BOOLEAN', $this->bool2dt(false), true, ''); 
-		$this->alterStorageEngine("notifications", "InnoDB");
+		$this->alterStorageEngine("notifications", "MyIsam");
 
 		# ---- filters ----
 		$this->createTable('filters', "utf8"); 
@@ -541,7 +541,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('sorton', 'filters', 'VARCHAR(128)', NULL, false, 'ascii');
 		$this->validateColumn('sortorder', 'filters', 'VARCHAR(128)', NULL, false, 'ascii');
 		$this->validateColumn('enablenotify', 'filters', 'BOOLEAN', $this->bool2dt(false), true, '');
-		$this->alterStorageEngine("filters", "InnoDB");
+		$this->alterStorageEngine("filters", "MyIsam");
 
 		# ---- filtercounts ----
 		$this->createTable('filtercounts', "utf8"); 
@@ -550,7 +550,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('currentspotcount', 'filtercounts', 'INTEGER', "0", true, '');
 		$this->validateColumn('lastvisitspotcount', 'filtercounts', 'INTEGER', "0", true, '');
 		$this->validateColumn('lastupdate', 'filtercounts', 'INTEGER', "0", true, '');
-		$this->alterStorageEngine("filtercounts", "InnoDB");
+		$this->alterStorageEngine("filtercounts", "MyIsam");
 
 		# ---- spotteridblacklist table ---- #
 		$this->createTable('spotteridblacklist', "utf8");
@@ -559,7 +559,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('idtype', 'spotteridblacklist', 'INTEGER', "0", true, '');
 		$this->validateColumn('origin', 'spotteridblacklist', 'VARCHAR(255)', NULL, false, 'ascii');
 		$this->validateColumn('doubled', 'spotteridblacklist', 'BOOLEAN', $this->bool2dt(false), true, '');
-		$this->alterStorageEngine("spotteridblacklist", "InnoDB");
+		$this->alterStorageEngine("spotteridblacklist", "MyIsam");
 		
 		# Update old blacklisttable
 		$schemaVer = $this->_dbcon->singleQuery("SELECT value FROM settings WHERE name = 'schemaversion'", array());
@@ -630,12 +630,12 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('stamp', 'cache', 'INTEGER', "0", true, '');
 		$this->validateColumn('metadata', 'cache', 'TEXT', NULL, false, 'ascii');
         $this->validateColumn('ttl', 'cache', 'INTEGER', "0", true, '');
-		$this->alterStorageEngine("cache", "InnoDB");
+		$this->alterStorageEngine("cache", "MyIsam");
 
         # ---- moderated ring buffer table ---- #
         $this->createTable('moderatedringbuffer', "ascii");
         $this->validateColumn('messageid', 'moderatedringbuffer', 'VARCHAR(128)', "''", true, 'ascii');
-        $this->alterStorageEngine("moderatedringbuffer", "InnoDB");
+        $this->alterStorageEngine("moderatedringbuffer", "MyIsam");
 
         # ---- permaudit table ---- #
 		$this->createTable('permaudit', "ascii");
@@ -645,7 +645,7 @@ abstract class SpotStruct_abs {
 		$this->validateColumn('objectid', 'permaudit', "VARCHAR(128)", "''", true, 'ascii');
 		$this->validateColumn('result', 'permaudit', "BOOLEAN", $this->bool2dt(true), true, '');
 		$this->validateColumn('ipaddr', 'permaudit', "VARCHAR(45)", "''", true, 'ascii');
-		$this->alterStorageEngine("permaudit", "InnoDB");
+		$this->alterStorageEngine("permaudit", "MyIsam");
 
         # ---- debuglog table ---- #
         $this->createTable('debuglog', "ascii");
@@ -653,7 +653,7 @@ abstract class SpotStruct_abs {
         $this->validateColumn('microtime', 'debuglog', 'VARCHAR(16)', "0", true, '');
         $this->validateColumn('level', 'debuglog', 'INTEGER', "0", true, '');
         $this->validateColumn('message', 'debuglog', 'TEXT', NULL, false, 'ascii');
-        $this->alterStorageEngine("debuglog", "InnoDB");
+        $this->alterStorageEngine("debuglog", "MyIsam");
 
         ##############################################################################################
 		### Remove old sessions ######################################################################
