@@ -1,14 +1,14 @@
-Nieuwe spots opgehaald
+New spots retrieved.
 
-Er <?php
-echo ($newSpotCount == 1) ? "is " . $newSpotCount . " spot" : "zijn " . $newSpotCount . " spots";
+There <?php
+echo ($newSpotCount == 1) ? 'is '.$newSpotCount.' spot' : 'are '.$newSpotCount.' spots';
 if ($newCommentCount > 0) {
-	echo ($newReportCount > 0) ? ", " : " en ";
-	echo $newCommentCount;
-	echo ($newCommentCount == 1) ? " reactie" : " reacties";
-} # if
+    echo ($newReportCount > 0) ? ', ' : ' and ';
+    echo $newCommentCount;
+    echo ($newCommentCount == 1) ? ' reaction' : ' reactions';
+} // if
 if ($newReportCount > 0) {
-	echo " en " . $newReportCount;
-	echo ($newCommentCount == 1) ? " reports" : " reports";
-} # if
-?> opgehaald.
+    echo ' and '.$newReportCount;
+    echo ($newCommentCount == 1) ? ' reports' : ' reports';
+} // if
+?> retrieved.

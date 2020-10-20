@@ -1,45 +1,53 @@
 <?php
 
-class Services_Translation_Microsoft {
+class Services_Translation_Microsoft
+{
     // actual translation URL
-    const translateUrl = "http://api.microsofttranslator.com/v2/Http.svc/TranslateArray?";
+    const translateUrl = 'http://api.microsofttranslator.com/v2/Http.svc/TranslateArray?';
     // oAuth url
-    const authUrl      = "https://datamarket.accesscontrol.windows.net/v2/OAuth2-13/";
+    const authUrl = 'https://api.cognitive.microsoft.com/sts/v1.0/issueToken';
     // application Scope Url
-    const scopeUrl     = "http://api.microsofttranslator.com";
+    const scopeUrl = 'http://api.microsofttranslator.com';
     // application grant type
-    const grantType    = "client_credentials";
+    const grantType = 'client_credentials';
+    // subscription key headers
+    const subscriptionKeyHeader = 'Ocp-Apim-Subscription-Key';
 
     /*
      * These id's need to be copied from the Azure market place, please
      * check the follow blog post
      *      http://blogs.msdn.com/b/translation/p/gettingstarted1.aspx
      */
-    private $_clientId = '';
-    private $_clientSecret = '';
+    private $_subscriptionKey = '';
 
     protected $_settings;
     protected $_cacheDao;
 
-    public function __construct(Services_Settings_Container $settings, Dao_Cache $cacheDao) {
+    public function __construct(Services_Settings_Container $settings, Dao_Cache $cacheDao)
+    {
         $this->_settings = $settings;
         $this->_cacheDao = $cacheDao;
 
-        $this->_clientId = $settings->get('ms_translator_clientid');
-        $this->_clientSecret = $settings->get('ms_translator_clientsecret');
-    } # ctor
+        $this->_subscriptionKey = $settings->get('ms_translator_subscriptionkey');
+    }
+
+    // ctor
 
     /*
      * Returns whether the translation API is available
      */
-    function isAvailable() {
-        return (!empty($this->_clientId) && !empty($this->_clientSecret));
-    } # isAvailable
+    public function isAvailable()
+    {
+        return !empty($this->_subscriptionKey);
+    }
+
+    // isAvailable
 
     /*
      * Request an actual authentication token
      */
-    private function getAuthToken() {
+    private function getAuthToken()
+    {
         /*
          * We default to asking our own cache for an token, because
          * if we find one, this saves us one expensive HTTP call.
@@ -48,104 +56,91 @@ class Services_Translation_Microsoft {
          * after a few seconds
          */
         $svcPrvHttp = new Services_Providers_Http(null);
-        $translaterToken = $this->_cacheDao->getCachedTranslaterToken($this->_clientId . $this->_clientSecret);
+        $translaterToken = $this->_cacheDao->getCachedTranslaterToken($this->_subscriptionKey);
         if ($translaterToken != false) {
             return $translaterToken['content'];
-        } # if
+        } // if
 
-        # Don't even try if no tokens are available
+        // Don't even try if no tokens are available
         if (!$this->isAvailable()) {
             return false;
-        } # if
-
-        # create the request array
-        $paramArr = array (
-            'grant_type'    => Services_Translation_Microsoft::grantType,
-            'scope'         => Services_Translation_Microsoft::scopeUrl,
-            'client_id'     => $this->_clientId,
-            'client_secret' => $this->_clientSecret
-        );
+        } // if
 
         $svcPrvHttp->setMethod('POST');
-        $svcPrvHttp->setPostContent($paramArr);
-        $tmpResult = $svcPrvHttp->perform(Services_Translation_Microsoft::authUrl, null);
+        $svcPrvHttp->setContentType('text/plain');
+        $svcPrvHttp->setRawPostData('{body}');
+        $svcPrvHttp->addHttpHeaders([self::subscriptionKeyHeader.': '.$this->_subscriptionKey]);
+        $tmpResult = $svcPrvHttp->perform(self::authUrl, null);
 
         if (!$tmpResult['successful']) {
-            $tmpResult = @json_decode($tmpResult['data']);
-            if (!empty($tmpResult->error)) {
-                throw new Exception($tmpResult->error_description);
-            } # if
-
             return false;
-        } # if
+        } // if
 
-        $result = json_decode($tmpResult['data']);
-
-        /*
-         * throw any exception if one happens because else we get sometimes
-         * failing translations which suck even more.
-         */
-        if (!empty($result->error)) {
-            throw new Exception($result->error_description);
-        } # if
+        $translaterToken = $tmpResult['data'];
 
         /*
          * store the translation token into the cache
          */
-        $translaterToken = $result->access_token;
-        $this->_cacheDao->saveTranslaterTokenCache($this->_clientId . $this->_clientSecret, // unique token
-                                              time() + ($result->expires_in - 2),      // The amount of secs token is valid
+        $this->_cacheDao->saveTranslaterTokenCache($this->_subscriptionKey, // unique token
+                                              time() + 7 * 60, // valid for 10 minutes so renew early
                                               $translaterToken);
 
         return $translaterToken;
-    } # getAuthToken
+    }
+
+    // getAuthToken
 
     /*
      * translate a single body
      */
-    public function translateSingle($dstLanguage, $text) {
+    public function translateSingle($dstLanguage, $text)
+    {
         /*
          * Try to obtain an translator token
          */
         $translaterToken = $this->getAuthToken();
         if ($translaterToken === false) {
             return false;
-        } # if
+        } // if
 
         /*
          * Actually start translating our message
          */
-        $params = "appId=" .
-                    "&text=" . urlencode($text) .
-                    "&to=" . urlencode($dstLanguage) .
-                    "&contentType=" . urlencode("text/plain");
+        $params = 'appId='.
+                    '&text='.urlencode($text).
+                    '&to='.urlencode($dstLanguage).
+                    '&contentType='.urlencode('text/plain');
 
         $svcPrvHttp = new Services_Providers_Http(null);
         $svcPrvHttp->setBearerAuth($translaterToken);
-        $httpResult = $svcPrvHttp->perform(Services_Translation_Microsoft::translateUrl . $params, false);
+        $httpResult = $svcPrvHttp->perform(self::translateUrl.$params, false);
 
         /*
          * and use the result
         */
         if ($httpResult['successful']) {
             $xmlReturn = simplexml_load_string($httpResult['data']);
+
             return (string) $xmlReturn[0];
         } else {
             return false;
-        } # else
-    } # translateSingle
+        } // else
+    }
+
+    // translateSingle
 
     /*
      * translate a single body
      */
-    public function translateMultiple($dstLanguage, $list, $field) {
+    public function translateMultiple($dstLanguage, $list, $field)
+    {
         /*
          * Try to obtain an translator token
          */
         $translaterToken = $this->getAuthToken();
         if ($translaterToken === false) {
             return false;
-        } # if
+        } // if
 
         /*
          * Actually start translating our message
@@ -158,13 +153,13 @@ class Services_Translation_Microsoft {
         $tar->appendChild($doc->createElement('From', ''));
 
         $texts = $doc->createElement('Texts');
-        foreach($list as $v) {
+        foreach ($list as $v) {
             $str = $doc->createElement('string');
             $str->appendChild($doc->createTextNode($v[$field]));
             $str->setAttribute('xmlns', 'http://schemas.microsoft.com/2003/10/Serialization/Arrays');
 
             $texts->appendChild($str);
-        } # foreach
+        } // foreach
         $tar->appendChild($texts);
         $tar->appendChild($doc->createElement('To', $dstLanguage));
         $doc->appendChild($tar);
@@ -174,7 +169,7 @@ class Services_Translation_Microsoft {
         $svcPrvHttp->setMethod('POST');
         $svcPrvHttp->setRawPostData($doc->saveXML());
         $svcPrvHttp->setContentType('text/xml');
-        $httpResult = $svcPrvHttp->perform(Services_Translation_Microsoft::translateUrl, false);
+        $httpResult = $svcPrvHttp->perform(self::translateUrl, false);
 
         /*
          * and use the result
@@ -187,17 +182,17 @@ class Services_Translation_Microsoft {
             $translated = simplexml_load_string($httpResult['data']);
             $listCounter = 0;
 
-            foreach($translated->TranslateArrayResponse as $tar) {
-                $list[$listCounter][$field . '_translated'] = (string) $tar->TranslatedText;
+            foreach ($translated->TranslateArrayResponse as $tar) {
+                $list[$listCounter][$field.'_translated'] = (string) $tar->TranslatedText;
 
                 $listCounter++;
-            } # foreach
+            } // foreach
 
             return $list;
         } else {
             return false;
-        } # else
-    } # translateMultiple
+        } // else
+    }
 
-
-} # class Services_Translation_Microsoft
+    // translateMultiple
+} // class Services_Translation_Microsoft
